@@ -38,10 +38,10 @@ function App() {
             width: "100vw"
           }}>
        
+           
+          {/* //  <SplashScreen/> */}
             <SideBar />
-            {/* <SplashScreen/> */}
             <Feed />
-
             <SearchBar />
           </Box>
         </Router>

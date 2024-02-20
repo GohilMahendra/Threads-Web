@@ -2,14 +2,17 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import UserReducer from "./slices/UserSlice";
-
+import FeedReducer from "./slices/FeedSlice";
+import ConversationsReducer from "./slices/ConversationSlice";
 // const persistConfig = {
 //     key: "root",
 //     storage: AsyncStorage,
 //   };
 
 const RootReducer = combineReducers({
-    User: UserReducer
+    User: UserReducer,
+    Feed: FeedReducer,
+    Conversations: ConversationsReducer
 })
 const store = configureStore({
     reducer: RootReducer,

@@ -4,6 +4,8 @@ import { SocketContext } from "../../globals/SocketProvider"
 import { useAppDispatch } from "../../redux/store"
 import { SignInAction } from "../../redux/actions/UserActions"
 import io from "socket.io-client";
+import logo from "../../assets/theads-icon-background.png";
+import { BASE_URL } from "../../globals/constants"
 const SplashScreen = () =>
 {
     const { socket, setSocket } = useContext(SocketContext)
@@ -20,7 +22,7 @@ const SplashScreen = () =>
                 const fullfilled = await dispatch(SignInAction({ email, password }))
                 if (SignInAction.fulfilled.match(fullfilled)) {
                     const token = localStorage.getItem("token")
-                    const socket = io('http://localhost:3000', {
+                    const socket = io(BASE_URL, {
                         auth: {
                             token: token
                         }
@@ -49,7 +51,9 @@ const SplashScreen = () =>
     }, [])
     return(
         <Box sx={{ display:"flex",justifyContent:"center",alignItems:"center", flex:1, bgcolor:"#000" }} >
-            <Typography sx={{color:"white"}}>Tread</Typography>
+           <img
+           src={logo}
+           />
         </Box>
     )
 }

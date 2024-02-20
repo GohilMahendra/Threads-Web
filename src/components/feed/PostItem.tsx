@@ -1,9 +1,13 @@
-import { Avatar, Box, Paper, Stack, Typography } from "@mui/material"
+import { Avatar, Box, IconButton, Paper, Stack, Typography } from "@mui/material"
 import { Thread } from "../../types/Post"
 import FavoriteSharpIcon from '@mui/icons-material/FavoriteSharp';
 import ShareIcon from '@mui/icons-material/Share';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
-
+import { timeDifference } from "../../globals/utilities";
+import RepeatIcon from '@mui/icons-material/Repeat';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import SendIcon from '@mui/icons-material/Send';
 type PostItemsProps =
     {
         post: Thread,
@@ -17,47 +21,56 @@ const PostItem = (props: PostItemsProps) => {
     const post = props.post
     const media = post.media
 
+    const toggeleLike = () => {
+        if (post.isLiked)
+            props.onLikeToggle(post._id, "unlike")
+        else
+            props.onLikeToggle(post._id, "like")
+    }
     return (
-        <Paper elevation={5} sx={{ display: "flex", borderRadius: 5, bgcolor: "white", margin: 2, padding: 2, }}>
+        <Paper elevation={5} sx={styles.container}>
             <Stack sx={{ display: "flex" }}>
                 <Avatar
                     src={post.user.profile_picture}
                 />
             </Stack>
             <Stack sx={{ display: 'flex', justifyContent: "center", marginLeft: 2 }}>
-                <Stack>
+                <Stack direction={"row"} justifyContent={"space-between"}>
                     <Typography variant="body1" sx={{ fontWeight: "bold" }}>{post.user.fullname}</Typography>
-                    <Typography sx={{ fontSize: 14 }} >{post.user.fullname}</Typography>
+                    <Typography sx={{ fontSize: 14 }}>{timeDifference(post.updated_at)}</Typography>
                 </Stack>
-                <Typography sx={{ fontSize: 14 }}>This for the content which is goona be wrotter over here for the this kind of wrappers</Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: "wrap" }}>
-                    {post.media.map((image, index) => (
-                        <Box sx={{
-                            height: "45%",
-                            width: "45%"
-                        }}>
+                <Typography sx={{ fontSize: 14 }}>
+                    Happy #SunDay! This week’s space weather report includes: <br />
+                    · 1 X-class flare  <br />
+                    · 13 M-class flares  <br />
+                    · 28 coronal mass ejections <br />
+                    · 0 geomagnetic storms  <br />
 
-                            <img
-                                src={image.media_url}
-                                alt={`Image ${index + 1}`}
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    borderRadius: "8px",
-                                }}
-                            />
-                        </Box>
-                    ))}
-
-                </Box>
+                    This video from NASA’s Solar Dynamics Observatory (SDO) shows activity on the Sun over the past week.
+                </Typography>
                 <Stack direction="row"
                     margin={2}
                     alignItems="center"
                     spacing={5}>
-                    <FavoriteSharpIcon sx={{ color: (post.isLiked) ? "red" : "grey" }} />
-                    <ShareIcon />
-                    <ModeCommentIcon />
+                    <IconButton onClick={toggeleLike}>
+                        {
+                            post.isLiked ?
+                                <FavoriteSharpIcon sx={{ color: "red" }} />
+                                : <FavoriteBorderIcon />
+                        }
+
+                        <Typography sx={{marginLeft:1}}>{post.likes}</Typography>
+                    </IconButton>
+                    <IconButton>
+                        <ChatBubbleOutlineIcon />
+                        <Typography sx={{marginLeft:1}}>{post.replies}</Typography>
+                    </IconButton>
+                    <IconButton>
+                        <RepeatIcon />
+                    </IconButton>
+                    <IconButton>
+                        <SendIcon />
+                    </IconButton>
                 </Stack>
             </Stack>
         </Paper>
@@ -65,3 +78,12 @@ const PostItem = (props: PostItemsProps) => {
 
 }
 export default PostItem
+
+const styles = {
+    container: {
+        display: "flex",
+        borderRadius: 5,
+        bgcolor: "white",
+        margin: 2, padding: 2
+    }
+}
