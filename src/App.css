@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  display: flex;
+  flex: 1;
 }
 
 .App-logo {
@@ -35,4 +37,18 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+.textLogo {
+  color: green;
+  text-decoration-line: line-through;
+}
+.grid-container {
+  display: grid;
+  row-gap: 10;
 }

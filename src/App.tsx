@@ -1,25 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { Box, Container, ThemeProvider, Typography, createTheme } from '@mui/material';
+import SignIn from './pages/auth/SignIn';
+import SideBar from './components/globals/SideBar';
+import Feed from './pages/feed/Feed';
+import { ThemeContext } from '@emotion/react';
+import SearchBar from './components/globals/SearchBar';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+import { SocketProvider } from './globals/SocketProvider';
+import SplashScreen from './pages/auth/SplashScreen';
 
 function App() {
+  const theme = createTheme(
+    {
+      palette: {
+        primary: {
+          main: "#000"
+        },
+        secondary: {
+          main: '#cccccc'
+        },
+        background: {
+          default: "white"
+        }
+      }
+    }
+  )
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <SocketProvider>
+        <Router>
+        <Box sx={{
+            display: "flex",
+            flex: 1,
+            height: "100vh",
+            width: "100vw"
+          }}>
+       
+            <SideBar />
+            {/* <SplashScreen/> */}
+            <Feed />
+
+            <SearchBar />
+          </Box>
+        </Router>
+        </SocketProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
 
