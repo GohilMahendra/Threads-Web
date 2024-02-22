@@ -10,6 +10,7 @@ import { FetchMorePostsAction, FetchPostsAction, LikeAction, unLikeAction } from
 import { useSelector } from "react-redux";
 const Feed = () => {
     const posts = useSelector((state:RootState)=>state.Feed.Threads)
+    console.log(posts)
     const [loading, setLoading] = useState(false)
     const [loadMore, setLoadMore] = useState(false)
     const [lastOffset, setLastOffset] = useState<string | null>(null)
@@ -59,6 +60,7 @@ const Feed = () => {
                 alignItems: "center",
 
             }}>
+            <Typography>Feed section</Typography>
             <Box sx={{ zIndex: 1000, bgcolor: "white", width: "auto", position: "sticky", borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs variant="fullWidth" value={selectedTab} onChange={handleChange} sx={{ gap: 2 }} aria-label="basic tabs example">
                     <Tab value={"for_you"} label="For You" />

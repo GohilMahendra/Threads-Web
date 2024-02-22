@@ -3,12 +3,14 @@ import { loginUser } from "../../api/UserApi"
 import { useContext, useState } from "react"
 import { BASE_URL } from "../../globals/constants"
 import { User, UserResponse } from "../../types/User"
-import logo from "../../assets/thread-dark.jpg";
 import { SignInAction } from "../../redux/actions/UserActions"
 import { RootState, useAppDispatch } from "../../redux/store"
 import { useSelector } from "react-redux"
 import io from "socket.io-client";
 import { SocketContext } from "../../globals/SocketProvider"
+import logo from "../../assets/theads-icon-background.png";
+import { makeStyles } from "@mui/styles"
+import { updateUnreadCount } from "../../redux/slices/ConversationSlice"
 const SignIn = () => {
 
     const theme = useTheme()
@@ -38,6 +40,14 @@ const SignIn = () => {
                     console.log('Connected to Socket.IO server');
                     setSocket(socket)
                 })
+                if (socket) {
+                    socket.on("newMessageNotification", ({ senderId, channel }) => {
+                        dispatch(updateUnreadCount({
+                            senderId: senderId,
+                            channel: channel
+                        }))
+                    })
+                }
             }
         }
         catch (err) {
@@ -46,72 +56,81 @@ const SignIn = () => {
     }
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-
-                height: "100vh", // Set height to 100% of viewport height
-                width: "100vw", // Set width to 100% of viewport width
-                backgroundColor: "#000",
-                justifyContent: "center",
-                alignItems: "center"
-            }}>
-
-            <Box sx={{
-                display: 'flex',
-                maxWidth: '500px',
-                backgroundColor: "black",
-                flex: 1, flexDirection: "column", justifyContent: "center"
-            }}>
+        <Box sx={styles.container}>
+            <Box sx={styles.formContainer}>
+                <img src={logo} style={styles.logo} />
                 <TextField
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email ..."
-                    InputProps={{
-                        sx: {
-                            borderRadius: '20px',
-                            margin: '10px',
-
-                            border: '1px solid white',
-                            color: 'white', // Set text color to white
-
-                        },
-                    }}
-
+                    InputProps={{ sx: styles.textField }}
                 />
                 <TextField
                     value={password}
+                    type="password"
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password ..."
-                    InputProps={{
-                        sx: {
-                            borderRadius: '20px',
-                            margin: '10px',
-                            color: 'white', // Set text color to white
-                            border: '1px solid white',
-                        },
-                    }}
+                    InputProps={{ sx: styles.textField }}
                 />
                 <Button
                     onClick={() => SignInUser()}
-                    variant={"text"}
-                    sx={{
-                        padding: '15px',
-                        borderRadius: '20px',
-                        margin: '10px',
-                        bgcolor: 'white',
-                        '&:hover': {
-                            bgcolor: 'lightgray', // Change to the desired hover color
-                        },
-                    }}
+                    variant="text"
+                    sx={styles.button}
                 >
-                    {!loading ?
-                        <Typography sx={{ textTransform: "none", color: "#000", }}>Sign In</Typography>
-                        : <CircularProgress />
-                    }
+                    {!loading ? (
+                        <Typography sx={styles.buttonText}>Sign In</Typography>
+                    ) : (
+                        <CircularProgress />
+                    )}
                 </Button>
             </Box>
         </Box>
     )
 }
 export default SignIn
+const styles = {
+    container: {
+        display: 'flex',
+        height: '100vh',
+        width: '100vw',
+        justifyContent: 'center',
+        backgroundColor: '#000',
+    },
+    formContainer: {
+        display: 'flex',
+        minWidth: '300px',
+        width: '400px',
+        maxWidth: '500px',
+        backgroundColor: 'black',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+    },
+    logo: {
+        height: 100,
+        width: 100,
+        alignSelf: 'center',
+        margin: 20,
+    },
+    textField: {
+        borderRadius: '20px',
+        margin: '10px',
+        border: '1px solid white',
+        color: 'white',
+    },
+    button: {
+        padding: '15px',
+        borderRadius: '20px',
+        margin: '10px',
+        backgroundColor: 'white',
+        '&:hover': {
+            backgroundColor: 'lightgray',
+        },
+    },
+    buttonText: {
+        textTransform: 'none',
+        fontWeight: 'bold',
+        color: '#000',
+    },
+}
+

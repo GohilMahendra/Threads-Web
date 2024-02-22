@@ -22,6 +22,7 @@ export const fetchMessages = async ({
                 "token": token
             }
         })
+
         if (response.status == 200) {
             return response.data
         }

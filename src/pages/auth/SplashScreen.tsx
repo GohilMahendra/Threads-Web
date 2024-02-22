@@ -6,17 +6,20 @@ import { SignInAction } from "../../redux/actions/UserActions"
 import io from "socket.io-client";
 import logo from "../../assets/theads-icon-background.png";
 import { BASE_URL } from "../../globals/constants"
+import { useNavigate } from "react-router-dom"
+import { updateUnreadCount } from "../../redux/slices/ConversationSlice"
 const SplashScreen = () =>
 {
     const { socket, setSocket } = useContext(SocketContext)
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
     const signIn = async () => {
         try {
             const email = localStorage.getItem("email")
             const password = localStorage.getItem("password")
 
             if (!email || !password) {
-                alert("no found")
+               navigate("/signin")
             }
             else {
                 const fullfilled = await dispatch(SignInAction({ email, password }))
@@ -32,10 +35,18 @@ const SplashScreen = () =>
                         console.log('Connected to Socket.IO server');
                         setSocket(socket)
                     })
+                    if (socket) {
+                        socket.on("newMessageNotification", ({ senderId,channel }) => {
+                            dispatch(updateUnreadCount({
+                                senderId: senderId,
+                                channel: channel
+                            }))
+                        })
+                    }
                 
                 }
                 else {
-                    alert("no found")
+                    navigate("/signin")
                 }
             }
         }
