@@ -9,16 +9,19 @@ import { } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import PersonIcon from '@mui/icons-material/Person';
-import Frame from "../../assets/theads-icon-background-light.png"
+import lightLogo from "../../assets/theads-icon-background-light.png"
+import darkLogo from "../../assets/theads-icon-background.png"
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from "react-router-dom";
+import { useThemeContext } from "../../globals/ThemeContext";
 const SideBar = () => {
-
-  const [selectedRoute, setSelectedRoute] = useState("home")
+  const theme = useTheme()
+  const [selectedRoute, setSelectedRoute] = useState("feed")
   const isSmallScreen = useMediaQuery((theme: any) => theme.breakpoints.down('sm'));
   const [anchorEle, setAnchorEle] = useState<HTMLElement | null>()
   const user = useSelector((state: RootState) => state.User.user)
   const navigate = useNavigate();
+  const {toggleTheme} = useThemeContext()
   const [signOutDialog, setSignOutDialog] = useState(false)
   const unread_count = useSelector((state: RootState) => state.Conversations.unread_messages)
   useEffect(() => {
@@ -78,6 +81,7 @@ const SideBar = () => {
         sx={{
           display: "flex",
           width: "20%",
+          bgcolor: theme.palette.background.default,
           justifyContent: "space-between",
           height: "100%",
           borderRight: "0.1px solid grey",
@@ -88,15 +92,15 @@ const SideBar = () => {
           <Container sx={{ display: 'flex', alignItems: "center", justifyContent: "center" }}>
             <img
               style={{ objectFit: "contain", height: 50, margin: 20, width: 50, borderRadius: 50 }}
-              src={Frame}
+              src={theme.palette.mode=="dark"?darkLogo:lightLogo}
             />
           </Container>
 
-          <ListItem button onClick={() => setSelectedRoute("home")} selected={selectedRoute === "home"}>
+          <ListItem button onClick={() => setSelectedRoute("feed")} selected={selectedRoute === "feed"}>
             <ListItemIcon>
-              <HomeIcon color={selectedRoute === "home" ? "primary" : "secondary"} />
+              <HomeIcon color={selectedRoute === "feed" ? "primary" : "secondary"} />
             </ListItemIcon>
-            <ListItemText primary={<Typography fontWeight={"bold"} color={selectedRoute === "home" ? "primary" : "textSecondary"}>Home</Typography>} />
+            <ListItemText primary={<Typography fontWeight={"bold"} color={selectedRoute === "feed" ? "primary" : "textSecondary"}>Home</Typography>} />
           </ListItem>
 
           <ListItem button onClick={() => setSelectedRoute("search")} selected={selectedRoute === "search"}>
@@ -141,7 +145,9 @@ const SideBar = () => {
               cursor: "pointer",
             }}
           >
-            <Switch />
+            <Switch 
+            onChange={()=>toggleTheme()}
+            />
             <Typography sx={{ textTransform: "none", textAlign: "center", marginLeft: "10px" }}>
               Dark Mode
             </Typography>
@@ -151,7 +157,7 @@ const SideBar = () => {
               src={user.profile_picture}
             />
             <Box sx={{ marginLeft: 2, alignItems: "center", width: "100%", display: "flex", justifyContent: "space-between" }}>
-              <Typography sx={{ fontSize: 14 }}>{user.fullname}</Typography>
+              <Typography color={theme.palette.text.primary} sx={{ fontSize: 14 }}>{user.fullname}</Typography>
               <IconButton onClick={() => setSignOutDialog(true)} >
                 <MoreVertIcon />
               </IconButton>

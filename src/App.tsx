@@ -4,6 +4,7 @@ import { Provider, useSelector } from 'react-redux';
 import store, { RootState } from './redux/store';
 import { SocketProvider } from './globals/SocketProvider';
 import MainRoute from './routes/MainRoutes';
+import { ThemeContextProvider } from './globals/ThemeContext';
 
 function App() {
   const theme = createTheme(
@@ -26,11 +27,11 @@ function App() {
   )
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <SocketProvider>
+      <ThemeContextProvider>
+      <SocketProvider>
         <MainRoute/>
         </SocketProvider>
-      </ThemeProvider>
+      </ThemeContextProvider>
     </Provider>
   );
 }

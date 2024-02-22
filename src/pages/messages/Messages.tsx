@@ -34,7 +34,7 @@ const Messages = () => {
     const listRef = useRef<HTMLDivElement | null>(null)
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [files, setFiles] = useState<File[]>([])
-    const [previewFiles,setPreviewFiles] = useState<UploadMedia[]>([])
+    const [previewFiles, setPreviewFiles] = useState<UploadMedia[]>([])
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setShowEmoji(true)
@@ -54,7 +54,7 @@ const Messages = () => {
 
             if (files && files.length > 0) {
                 files.forEach((file, index) => {
-                    formdata.append(`media`, file);   
+                    formdata.append(`media`, file);
                 })
             }
             const response = await axios.post(
@@ -116,7 +116,7 @@ const Messages = () => {
                 if (listRef.current) {
                     listRef.current.scrollIntoView({ behavior: "smooth" })
                 }
-
+                console.log(data)
             }
         }
         catch (err) {
@@ -130,18 +130,17 @@ const Messages = () => {
         if (selectedFiles && selectedFiles.length <= 4) {
             const fileList = Array.from(selectedFiles) as File[];
             const newFileInfos = Array.from(selectedFiles).map(file => ({
-              uri: URL.createObjectURL(file),
-              type: file.type,
-              name: file.name
+                uri: URL.createObjectURL(file),
+                type: file.type,
+                name: file.name
             }))
             setFiles(fileList)
             setPreviewFiles(newFileInfos);
-          }
-          else
-          {
+        }
+        else {
             console.log("error in file upload")
             alert("Max 4 files Allowed")
-          }
+        }
     };
 
 
@@ -195,6 +194,7 @@ const Messages = () => {
                     messages.map((message) => {
                         return (
                             <Paper sx={{
+                                display: 'flex',
                                 maxWidth: "60%",
                                 alignSelf: (id == message.sender) ? "flex-start" : "flex-end",
                                 margin: 1,
@@ -205,13 +205,39 @@ const Messages = () => {
 
                             }}>
                                 <Typography sx={{ wordWrap: 'break-word' }}>{message.content}</Typography>
-                                {
-                                    message.media && message.media.length > 0
-                                    &&
-                                    <img
-                                    src={message.media[0].media_url}
-                                    />
-                                }
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        maxWidth: "100%",
+                                        margin: 2
+                                    }}
+                                >
+                                    {message.media?.map((file, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                width: "50%", // Two items per row by default
+                                                boxSizing: "border-box",
+                                                padding: 2
+                                            }}
+                                        >
+                                            {file.media_type.includes("image") ? (
+                                                <img
+                                                    style={{ objectFit: "contain", height: "100%", width: "100%" }}
+                                                    src={file.thumbnail ? file.thumbnail : file.media_url}
+                                                    alt={`Image ${index}`}
+                                                />
+                                            ) : (
+                                                <video
+                                                    controls
+                                                    style={{ objectFit: "contain", height: "100%", width: "100%" }}
+                                                    src={file.media_url}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
+                                </Box>
                             </Paper>
                         )
                     })
@@ -225,18 +251,18 @@ const Messages = () => {
                             previewFiles.map((file, index) => {
                                 return (
                                     <Box key={index} sx={{ position: "relative", margin: 2, width: 100 }}>
-                                       {file.type.includes("image") && <img
+                                        {file.type.includes("image") && <img
                                             style={{ height: "100%", width: "100%", objectFit: "cover" }}
                                             src={file.uri}
                                             alt="File Preview"
                                         />
                                         }
                                         {
-                                           file.type.includes("video") && <video
-                                           controls
-                                           style={{ height: "100%", width: "100%", objectFit: "cover" }}
-                                           src={file.uri}
-                                       /> 
+                                            file.type.includes("video") && <video
+                                                controls
+                                                style={{ height: "100%", width: "100%", objectFit: "cover" }}
+                                                src={file.uri}
+                                            />
                                         }
                                         <Box
                                             sx={{
@@ -275,7 +301,7 @@ const Messages = () => {
                                 id="file-input"
                                 type="file"
                                 multiple
-                                maxLength={4} 
+                                maxLength={4}
                                 accept="video/*,image/*"
                                 style={{ display: 'none' }}
                                 onChange={(event) => handleFileUpload(event)}
@@ -292,12 +318,12 @@ const Messages = () => {
                             width: "80%",
                         }}
                     />
-                        <IconButton
-                            disabled={(userMessage.length == 0 && files.length == 0)}
-                            onClick={() => sendMessage()}>
-                            <SendIcon />
-                        </IconButton>
-                    
+                    <IconButton
+                        disabled={(userMessage.length == 0 && files.length == 0)}
+                        onClick={() => sendMessage()}>
+                        <SendIcon />
+                    </IconButton>
+
                 </Stack>
             </Box>
             <Popover

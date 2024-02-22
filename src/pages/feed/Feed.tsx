@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, Divider, Grid, IconButton, Modal, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { Avatar, Box, CircularProgress, Divider, Grid, IconButton, Modal, Paper, Stack, Tab, Tabs, Typography, useTheme } from "@mui/material"
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Thread } from "../../types/Post";
@@ -8,9 +8,10 @@ import PostItem from "../../components/feed/PostItem";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { FetchMorePostsAction, FetchPostsAction, LikeAction, unLikeAction } from "../../redux/actions/FeedActions";
 import { useSelector } from "react-redux";
+
 const Feed = () => {
+    const theme = useTheme()
     const posts = useSelector((state:RootState)=>state.Feed.Threads)
-    console.log(posts)
     const [loading, setLoading] = useState(false)
     const [loadMore, setLoadMore] = useState(false)
     const [lastOffset, setLastOffset] = useState<string | null>(null)
@@ -54,7 +55,8 @@ const Feed = () => {
             sx={{
                 display: 'flex',
                 flexDirection: "column",
-                flex: 4,
+                flex:1,
+                bgcolor: theme.palette.background.default,
                 overflowX: "hidden",
                 overflowY: "scroll",
                 alignItems: "center",
